@@ -21,7 +21,7 @@ while 1:
       a = format(get_information())
       print a
       sock.send("PRIVMSG " + chan + " :{0}\r\n".format(a))
-
+   print " "
    if data[0:4] == "PING":
       sock.send(data.replace("PING", "PONG"))
    if data[0]!=':':
